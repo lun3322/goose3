@@ -280,10 +280,7 @@ class ContentExtractor(BaseExtractor):
         number_of_links = float(len(links))
         link_divisor = float(number_of_link_words / words_number)
         score = float(link_divisor * number_of_links)
-        if score >= 1.0:
-            return True
-        return False
-        # return True if score > 1.0 else False
+        return score >= 1.0
 
     def get_score(self, node):
         """returns the gravityScore as an integer from this node"""
@@ -313,9 +310,7 @@ class ContentExtractor(BaseExtractor):
                 self.parser.remove(para)
 
         sub_paragraphs2 = self.parser.get_elements_by_tag(elm, tag="p")
-        if not sub_paragraphs2 and elm.tag != "td":
-            return True
-        return False
+        return not sub_paragraphs2 and elm.tag != "td"
 
     def is_nodescore_threshold_met(self, node, elm):
         top_node_score = self.get_score(node)
