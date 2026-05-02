@@ -152,11 +152,11 @@ class ContentExtractor(BaseExtractor):
         minimum_stopword_count = 5
         max_stepsaway_from_node = 3
 
-        nodes = self.walk_siblings(node)
-        for current_node in nodes:
-            # p
-            current_node_tag = self.parser.get_tag(current_node)
-            if current_node_tag == para:
+        # Iterate preceding siblings lazily so we bail after `max_stepsaway_from_node`
+        # paragraphs without scanning the entire prior subtree (was O(N) per call,
+        # making `calculate_best_node` O(N^2) for documents with many paragraphs).
+        for current_node in node.itersiblings(preceding=True):
+            if self.parser.get_tag(current_node) == para:
                 if steps_away >= max_stepsaway_from_node:
                     return False
                 para_text = self.parser.get_text(current_node)
